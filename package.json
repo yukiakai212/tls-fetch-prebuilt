@@ -1,6 +1,6 @@
 {
   "name": "@yukiakai/tls-fetch",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Rust native module with JA3/TLS spoofing",
   "type": "module",
   "main": "index.cjs",
@@ -13,7 +13,6 @@
     "index.cjs",
     "index.mjs",
     "index.d.ts",
-    "install.js",
     "bin/*"
   ],
   "os": [
@@ -36,8 +35,7 @@
   "scripts": {
     "test": "npx @napi-rs/cli build && vitest run --reporter verbose",
     "release": "npm run build && node publish.js",
-    "build": "npx @napi-rs/cli build --release --platform --config package.json",
-    "install": "node install.js"
+    "build": "npx @napi-rs/cli build --release --platform --config package.json"
   },
   "keywords": [
     "tls-fetch"
@@ -62,15 +60,15 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@node-rs/helper": "^1.6.0",
-    "fs-extra": "^11.3.0",
-    "glob": "^11.0.3"
+    "@node-rs/helper": "^1.6.0"
   },
   "devDependencies": {
     "@napi-rs/cli": "^2.18.4",
     "dotenv": "^17.0.0",
     "esbuild": "^0.25.5",
     "esbuild-node-externals": "^1.18.0",
+    "fs-extra": "^11.3.0",
+    "glob": "^11.0.3",
     "proxy-chain": "^2.5.9",
     "vitest": "^3.2.4"
   }
