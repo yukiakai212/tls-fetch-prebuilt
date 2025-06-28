@@ -13,7 +13,9 @@
 * ✅ Custom TLS Client Hello for fingerprint evasion
 * ✅ Native performance (Rust + Tokio under the hood)
 * ✅ Seamless Node.js integration (via `napi-rs`)
-* ✅ Support for streaming responses to file
+* ✅ Supports proxy (HTTP, HTTPS, SOCKS4, SOCKS5)
+* ✅ Modern fetch-like API design
+* ✅ Stream large responses directly to file
 * ✅ Lightweight, no Puppeteer or headless browser needed
 
 ---
@@ -24,42 +26,42 @@
 npm install @yukiakai/tls-fetch
 ```
 
-️ Runtime Dependency: OpenSSL 3
-
-This package requires **OpenSSL 3 runtime (`libssl.so.3`)** to load native bindings correctly.
+📦 Runtime Dependency: **OpenSSL 3 (`libssl.so.3`)**
 
 If you encounter an error like:
 
-    Error: libssl.so.3: cannot open shared object file: No such file or directory
+```
+Error: libssl.so.3: cannot open shared object file: No such file or directory
+```
 
 Please install OpenSSL 3:
 
-🐧 Ubuntu 22.04+ (most systems already have it):
+### 🐧 Ubuntu 22.04+
+```bash
+sudo apt update
+sudo apt install libssl3
+```
 
-    sudo apt update
-    sudo apt install libssl3
-
-🐧 Ubuntu 20.04 or older:
-
-OpenSSL 3 is not available in the default repository. You have two options:
-
-1. Upgrade your OS to Ubuntu 22.04 or later  
-2. Manually build OpenSSL 3:
-
-    sudo apt update && sudo apt install build-essential zlib1g-dev checkinstall
-    cd /usr/local/src
-    sudo wget https://www.openssl.org/source/openssl-3.0.14.tar.gz
-    sudo tar -xf openssl-3.0.14.tar.gz
-    cd openssl-3.0.14
-    sudo ./config --prefix=/usr/local/openssl-3 --openssldir=/usr/local/openssl-3
-    sudo make -j$(nproc)
-    sudo make install
+### 🐧 Ubuntu 20.04 or older:
+Manually build OpenSSL 3:
+```bash
+sudo apt install build-essential zlib1g-dev checkinstall
+cd /usr/local/src
+sudo wget https://www.openssl.org/source/openssl-3.0.14.tar.gz
+sudo tar -xf openssl-3.0.14.tar.gz
+cd openssl-3.0.14
+sudo ./config --prefix=/usr/local/openssl-3 --openssldir=/usr/local/openssl-3
+sudo make -j$(nproc)
+sudo make install
+```
 
 Then add this to your environment:
+```bash
+export LD_LIBRARY_PATH=/usr/local/openssl-3/lib:$LD_LIBRARY_PATH
+export PATH=/usr/local/openssl-3/bin:$PATH
+```
 
-    export LD_LIBRARY_PATH=/usr/local/openssl-3/lib:$LD_LIBRARY_PATH
-    export PATH=/usr/local/openssl-3/bin:$PATH
-
+---
 
 ## Usage
 ### CommonJS
@@ -75,9 +77,12 @@ tlsFetch.get('https://example.com', {
 ```js
 import tlsFetch from '@yukiakai/tls-fetch';
 
-tlsFetch.get('https://example.com', {
-  'User-Agent': 'Mozilla/5.0 ...',
-}).then(res => { /* todo */})
+const res = await tlsFetch.post('https://example.com/api', {
+  headers: { 'Content-Type': 'application/json' },
+  body: Buffer.from(JSON.stringify({ foo: 'bar' })),
+  proxy: 'socks5://127.0.0.1:9050' // optional
+});
+console.log(res.statusCode);
 
 ```
 
@@ -87,7 +92,7 @@ tlsFetch.get('https://example.com', {
 
 All methods are **Promise-based** and use `Buffer` for binary-safe transmission.
 
-### `get(url: string, headers: Record<string, string>): Promise<HttpResponse>`
+### `get(url: string, options?: RequestOptions | undefined | null): Promise<HttpResponse>`
 
 Performs a `GET` request with browser-like TLS fingerprinting.
 
@@ -95,14 +100,14 @@ Performs a `GET` request with browser-like TLS fingerprinting.
 import tlsFetch from '@yukiakai/tls-fetch'
 
 const res = await tlsFetch.get('https://example.com', {
-  'User-Agent': 'Mozilla/5.0 ...',
+  headers : { 'User-Agent': 'Mozilla/5.0 ...' },
 })
-console.log(res.statusCode, res.header, res.data.toString())
+console.log(res.statusCode, res.headers, res.data.toString())
 ```
 
 ---
 
-### `post(url: string, headers: Record<string, string>, body?: Buffer | null): Promise<HttpResponse>`
+### `post(url: string, options?: RequestOptions | undefined | null): Promise<HttpResponse>`
 
 Sends a `POST` request.
 
@@ -110,13 +115,14 @@ Sends a `POST` request.
 import tlsFetch from '@yukiakai/tls-fetch'
 
 const res = await tlsFetch.post('https://api.example.com', {
-  'Content-Type': 'application/json',
-}, Buffer.from(JSON.stringify({ foo: 'bar' })))
+  headers: { 'Content-Type': 'application/json' },
+  body: Buffer.from(JSON.stringify({ foo: 'bar' }))
+})
 ```
 
 ---
 
-### `fetch(method: string, url: string, headers: Record<string, string>, body?: Buffer | null): Promise<HttpResponse>`
+### `fetch(url: string, options: RequestOptions): Promise<HttpResponse>`
 
 Generic method supporting any HTTP verb.
 
@@ -124,22 +130,22 @@ Generic method supporting any HTTP verb.
 import tlsFetch from '@yukiakai/tls-fetch'
 
 const res = await tlsFetch.fetch('PUT', 'https://api.example.com/item/123', {
-  'Authorization': 'Bearer token',
-}, Buffer.from('payload'))
+  headers: { 'Authorization': 'Bearer token' },
+  body: Buffer.from('payload'),
+  proxy: 'http://127.0.0.1:8080'
+})
 ```
 
 ---
 
-### `stream(method: string, url: string, headers: Record<string, string>, filePath: string, body?: Buffer | null): Promise<HttpStreamResponse>`
+### `stream(url: string, filePath: string, options?: RequestOptions | undefined | null): Promise<HttpStreamResponse>`
 
-Streams the response body directly to a local file (e.g. for large downloads).
+Stream response directly to a file.
 
 ```ts
 import tlsFetch from '@yukiakai/tls-fetch'
 
-await tlsFetch.stream('GET', 'https://cdn.example.com/video.mp4', {
-  'User-Agent': 'Mozilla/5.0 ...',
-}, './video.mp4')
+await tlsFetch.stream('GET', 'https://cdn.example.com/video.mp4', './video.mp4')
 ```
 
 ---
@@ -147,15 +153,20 @@ await tlsFetch.stream('GET', 'https://cdn.example.com/video.mp4', {
 ## Interfaces
 
 ```ts
+interface RequestOptions {
+  method?: string
+  headers?: Record<string, string>
+  body?: Buffer
+  proxy?: string
+}
 interface HttpResponse {
   statusCode: number
-  header: Record<string, string>
+  headers: Record<string, string>
   data: Buffer
 }
-
 interface HttpStreamResponse {
   statusCode: number
-  header: Record<string, string>
+  headers: Record<string, string>
   file: string
 }
 ```
@@ -164,10 +175,10 @@ interface HttpStreamResponse {
 
 ## Use Cases
 
-* Bypass browser check
-* Fetch resources with real browser-like TLS handshake
-* Automate API interaction with stealth
-* Stream large media files without browser
+* Bypass anti-bot browser checks
+* Access sites using real browser-like TLS handshakes
+* Fetch through proxies (for scraping, automation)
+* Download large files directly to disk
 
 ---
 
@@ -175,13 +186,12 @@ interface HttpStreamResponse {
 
 * Requires Node.js 16+
 * Compatible with Linux and Windows (macOS support WIP)
-* Ensure Rust toolchain is installed if building locally
 
 ---
 
 ## License
 
-MIT © \[Yuki]
+MIT © [Yuki]
 
 ---
 
