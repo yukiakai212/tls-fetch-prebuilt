@@ -129,7 +129,8 @@ Generic method supporting any HTTP verb.
 ```ts
 import tlsFetch from '@yukiakai/tls-fetch'
 
-const res = await tlsFetch.fetch('PUT', 'https://api.example.com/item/123', {
+const res = await tlsFetch.fetch('https://api.example.com/item/123', {
+  method: 'PUT',
   headers: { 'Authorization': 'Bearer token' },
   body: Buffer.from('payload'),
   proxy: 'http://127.0.0.1:8080'
@@ -145,7 +146,7 @@ Stream response directly to a file.
 ```ts
 import tlsFetch from '@yukiakai/tls-fetch'
 
-await tlsFetch.stream('GET', 'https://cdn.example.com/video.mp4', './video.mp4')
+await tlsFetch.stream('https://cdn.example.com/video.mp4', './video.mp4')
 ```
 
 ---
