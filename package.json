@@ -1,9 +1,10 @@
 {
   "name": "@yukiakai/tls-fetch",
-  "version": "1.1.2",
-  "description": "Rust native module with JA3/TLS spoofing",
+  "version": "1.2.0-beta",
+  "description": "Rust native HTTP client emulating real browser TLS handshakes.",
   "type": "module",
-  "main": "index.cjs",
+  "main": "./index.mjs",
+  "types": "./index.d.ts",
   "releaseBinary": "bin",
   "exports": {
     "import": "./index.mjs",
@@ -13,7 +14,8 @@
     "index.cjs",
     "index.mjs",
     "index.d.ts",
-    "bin/*"
+    "bin/*",
+    "dist/*"
   ],
   "os": [
     "linux",
@@ -35,10 +37,13 @@
   "scripts": {
     "test": "npx @napi-rs/cli build && vitest run --reporter verbose",
     "release": "npm run build && node publish.js",
-    "build": "npx @napi-rs/cli build --release --platform --config package.json"
+    "build": "npx @napi-rs/cli build --release --platform --config package.json && tsup"
   },
   "keywords": [
-    "tls-fetch"
+    "tls-fetch",
+	"Rust",
+	"TLS",
+	"HTTP client"
   ],
   "author": "Yuki_akai",
   "homepage": "https://github.com/yukiakai212/tls-fetch-prebuilt",
@@ -70,6 +75,8 @@
     "fs-extra": "^11.3.0",
     "glob": "^11.0.3",
     "proxy-chain": "^2.5.9",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   }
 }

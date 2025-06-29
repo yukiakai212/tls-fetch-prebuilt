@@ -1,10 +1,17 @@
 # @yukiakai/tls-fetch
+![Windows](https://img.shields.io/badge/Windows-supported-brightgreen?logo=windows)
+![Linux](https://img.shields.io/badge/Linux-supported-brightgreen?logo=linux)
+![Apple Sucks](https://img.shields.io/badge/macOS-unsupported-red?logo=apple&logoColor=white&labelColor=black)
 
+[![npm](https://img.shields.io/npm/v/@yukiakai/tls-fetch?color=crimson&logo=npm)](https://www.npmjs.com/package/@yukiakai/tls-fetch)
+[![downloads](https://img.shields.io/npm/dt/@yukiakai/tls-fetch?label=downloads&color=blue&logo=npm)](https://www.npmjs.com/package/@yukiakai/tls-fetch)
+[![install size](https://packagephobia.com/badge?p=@yukiakai/tls-fetch)](https://packagephobia.com/result?p=@yukiakai/tls-fetch)
+[![GitHub](https://img.shields.io/badge/GitHub-repo-blue?logo=github)](https://github.com/yukiakai212/tls-fetch-prebuilt)
 > Native Rust-powered HTTP client with TLS fingerprint bypass – for stealthy and high-performance web scraping or automation.
 
 &#x20;
 
-`@yukiakai/tls-fetch` is a native Node.js module (built with Rust & napi-rs) designed to bypass browser fingerprint authentication by simulating low-level TLS handshakes that resemble real browsers. Note: currently not supporting macOS.
+`@yukiakai/tls-fetch` is a native Node.js module (built with Rust & napi-rs) designed to bypass browser fingerprint authentication by simulating low-level TLS handshakes that resemble real browsers. Note: macOS is not supported.
 
 ---
 
@@ -13,7 +20,7 @@
 * ✅ Custom TLS Client Hello for fingerprint evasion
 * ✅ Native performance (Rust + Tokio under the hood)
 * ✅ Seamless Node.js integration (via `napi-rs`)
-* ✅ Supports proxy (HTTP, HTTPS, SOCKS4, SOCKS5)
+* ✅ Supports proxy (HTTP, HTTPS, SOCKS5)
 * ✅ Modern fetch-like API design
 * ✅ Stream large responses directly to file
 * ✅ Lightweight, no Puppeteer or headless browser needed
@@ -36,13 +43,13 @@ Error: libssl.so.3: cannot open shared object file: No such file or directory
 
 Please install OpenSSL 3:
 
-### 🐧 Ubuntu 22.04+
+### Ubuntu 22.04+
 ```bash
 sudo apt update
 sudo apt install libssl3
 ```
 
-### 🐧 Ubuntu 20.04 or older:
+### Ubuntu 20.04 or older:
 Manually build OpenSSL 3:
 ```bash
 sudo apt install build-essential zlib1g-dev checkinstall
@@ -69,7 +76,7 @@ export PATH=/usr/local/openssl-3/bin:$PATH
 const tlsFetch = require('@yukiakai/tls-fetch');
 
 tlsFetch.get('https://example.com', {
-  'User-Agent': 'Mozilla/5.0 ...',
+  headers : { 'User-Agent': 'Mozilla/5.0 ...' },
 }).then(res => { /* todo */})
 
 ```
@@ -80,7 +87,6 @@ import tlsFetch from '@yukiakai/tls-fetch';
 const res = await tlsFetch.post('https://example.com/api', {
   headers: { 'Content-Type': 'application/json' },
   body: Buffer.from(JSON.stringify({ foo: 'bar' })),
-  proxy: 'socks5://127.0.0.1:9050' // optional
 });
 console.log(res.statusCode);
 
@@ -170,6 +176,11 @@ interface HttpStreamResponse {
   headers: Record<string, string>
   file: string
 }
+interface HttpResponsePlus extends HttpResponse {
+  json(): any
+  text(): string
+  buffer(): Buffer
+}
 ```
 
 ---
@@ -179,14 +190,14 @@ interface HttpStreamResponse {
 * Bypass anti-bot browser checks
 * Access sites using real browser-like TLS handshakes
 * Fetch through proxies (for scraping, automation)
-* Download large files directly to disk
+* Download large files directly to disk (stream mode)
 
 ---
 
 ## Notes
 
 * Requires Node.js 16+
-* Compatible with Linux and Windows (macOS support WIP)
+* Compatible with Linux and Windows
 
 ---
 
