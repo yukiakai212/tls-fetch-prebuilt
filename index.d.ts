@@ -23,3 +23,13 @@ export declare function get(url: string, options?: RequestOptions | undefined | 
 export declare function post(url: string, options?: RequestOptions | undefined | null): Promise<HttpResponse>
 export declare function fetch(url: string, options: RequestOptions): Promise<HttpResponse>
 export declare function stream(url: string, filePath: string, options?: RequestOptions | undefined | null): Promise<HttpStreamResponse>
+
+
+/* file: types.d.ts */
+
+
+export interface HttpResponsePlus extends HttpResponse {
+  json(): any
+  text(): string
+  buffer(): Buffer
+}

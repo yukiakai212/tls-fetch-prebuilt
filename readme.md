@@ -1,12 +1,7 @@
 # @yukiakai/tls-fetch
-![Windows](https://img.shields.io/badge/Windows-supported-brightgreen?logo=windows)
-![Linux](https://img.shields.io/badge/Linux-supported-brightgreen?logo=linux)
-![Apple Sucks](https://img.shields.io/badge/macOS-unsupported-red?logo=apple&logoColor=white&labelColor=black)
+[![NPM Version][npm-version-image]][npm-url]
+[![NPM Downloads][npm-downloads-image]][npm-downloads-url]
 
-[![npm](https://img.shields.io/npm/v/@yukiakai/tls-fetch?color=crimson&logo=npm)](https://www.npmjs.com/package/@yukiakai/tls-fetch)
-[![downloads](https://img.shields.io/npm/dt/@yukiakai/tls-fetch?label=downloads&color=blue&logo=npm)](https://www.npmjs.com/package/@yukiakai/tls-fetch)
-[![install size](https://packagephobia.com/badge?p=@yukiakai/tls-fetch)](https://packagephobia.com/result?p=@yukiakai/tls-fetch)
-[![GitHub](https://img.shields.io/badge/GitHub-repo-blue?logo=github)](https://github.com/yukiakai212/tls-fetch-prebuilt)
 > Native Rust-powered HTTP client with TLS fingerprint bypass – for stealthy and high-performance web scraping or automation.
 
 &#x20;
@@ -17,12 +12,11 @@
 
 ## Features
 
-* ✅ Custom TLS Client Hello for fingerprint evasion
+* ✅ Real-browser TLS/JA3 fingerprint emulation
 * ✅ Native performance (Rust + Tokio under the hood)
 * ✅ Seamless Node.js integration (via `napi-rs`)
 * ✅ Supports proxy (HTTP, HTTPS, SOCKS5)
 * ✅ Modern fetch-like API design
-* ✅ Stream large responses directly to file
 * ✅ Lightweight, no Puppeteer or headless browser needed
 
 ---
@@ -108,7 +102,7 @@ import tlsFetch from '@yukiakai/tls-fetch'
 const res = await tlsFetch.get('https://example.com', {
   headers : { 'User-Agent': 'Mozilla/5.0 ...' },
 })
-console.log(res.statusCode, res.headers, res.data.toString())
+console.log(res.statusCode, res.headers, res.text())
 ```
 
 ---
@@ -210,3 +204,10 @@ MIT © [Yuki]
 ## Contributing
 
 PRs and issues welcome. Native TLS customization contributions especially appreciated.
+
+
+[npm-downloads-image]: https://badgen.net/npm/dm/@yukiakai/tls-fetch
+[npm-downloads-url]: https://www.npmjs.com/package/@yukiakai/tls-fetch
+[npm-url]: https://www.npmjs.com/package/@yukiakai/tls-fetch
+[npm-version-image]: https://badgen.net/npm/v/@yukiakai/tls-fetch
+
