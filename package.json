@@ -1,6 +1,6 @@
 {
   "name": "@yukiakai/tls-fetch",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Rust native HTTP client emulating real browser TLS handshakes.",
   "type": "module",
   "main": "./index.mjs",
@@ -41,9 +41,9 @@
   },
   "keywords": [
     "tls-fetch",
-	"Rust",
-	"TLS",
-	"HTTP client"
+    "Rust",
+    "TLS",
+    "HTTP client"
   ],
   "author": "Yuki_akai",
   "homepage": "https://github.com/yukiakai212/tls-fetch-prebuilt",
@@ -63,9 +63,10 @@
   "bugs": {
     "url": "https://github.com/yukiakai212/tls-fetch-prebuilt/issues"
   },
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "@node-rs/helper": "^1.6.0"
+    "@node-rs/helper": "^1.6.0",
+    "vanipath": "^1.0.5"
   },
   "devDependencies": {
     "@napi-rs/cli": "^2.18.4",
