@@ -67,18 +67,18 @@ export PATH=/usr/local/openssl-3/bin:$PATH
 ## Usage
 ### CommonJS
 ```js
-const tlsFetch = require('@yukiakai/tls-fetch');
+const { TLSFetch } = require('@yukiakai/tls-fetch');
 
-tlsFetch.get('https://example.com', {
+TLSFetch.get('https://example.com', {
   headers : { 'User-Agent': 'Mozilla/5.0 ...' },
 }).then(res => { /* todo */})
 
 ```
 ### ESM
 ```js
-import tlsFetch from '@yukiakai/tls-fetch';
+import { TLSFetch }  from '@yukiakai/tls-fetch';
 
-const res = await tlsFetch.post('https://example.com/api', {
+const res = await TLSFetch.post('https://example.com/api', {
   headers: { 'Content-Type': 'application/json' },
   body: Buffer.from(JSON.stringify({ foo: 'bar' })),
 });
@@ -90,14 +90,16 @@ console.log(res.statusCode);
 
 ## API
 
+See docs: [API docs][api-docs-url]
+
 All methods are **Promise-based** and use `Buffer` for binary-safe transmission.
 
-### `get(url: string, options?: RequestOptions | undefined | null): Promise<HttpResponse>`
+### `get(url: string, options?: HttpOptions): Promise<HttpResponse>`
 
 Performs a `GET` request with browser-like TLS fingerprinting.
 
 ```ts
-import tlsFetch from '@yukiakai/tls-fetch'
+import { tlsFetch } from '@yukiakai/tls-fetch'
 
 const res = await tlsFetch.get('https://example.com', {
   headers : { 'User-Agent': 'Mozilla/5.0 ...' },
@@ -107,14 +109,14 @@ console.log(res.statusCode, res.headers, res.text())
 
 ---
 
-### `post(url: string, options?: RequestOptions | undefined | null): Promise<HttpResponse>`
+### `post(url: string, options?: HttpOptions): Promise<HttpResponse>`
 
 Sends a `POST` request.
 
 ```ts
-import tlsFetch from '@yukiakai/tls-fetch'
+import { TLSFetch } from '@yukiakai/tls-fetch'
 
-const res = await tlsFetch.post('https://api.example.com', {
+const res = await TLSFetch.post('https://api.example.com', {
   headers: { 'Content-Type': 'application/json' },
   body: Buffer.from(JSON.stringify({ foo: 'bar' }))
 })
@@ -127,9 +129,9 @@ const res = await tlsFetch.post('https://api.example.com', {
 Generic method supporting any HTTP verb.
 
 ```ts
-import tlsFetch from '@yukiakai/tls-fetch'
+import { TLSFetch } from '@yukiakai/tls-fetch'
 
-const res = await tlsFetch.fetch('https://api.example.com/item/123', {
+const res = await TLSFetch.fetch('https://api.example.com/item/123', {
   method: 'PUT',
   headers: { 'Authorization': 'Bearer token' },
   body: Buffer.from('payload'),
@@ -139,43 +141,119 @@ const res = await tlsFetch.fetch('https://api.example.com/item/123', {
 
 ---
 
-### `stream(url: string, filePath: string, options?: RequestOptions | undefined | null): Promise<HttpStreamResponse>`
+### `stream(url: string, filePath: string, options?: RequestOptions): Promise<HttpStreamResponse>`
 
 Stream response directly to a file.
 
 ```ts
-import tlsFetch from '@yukiakai/tls-fetch'
+import { TLSFetch } from '@yukiakai/tls-fetch'
 
-await tlsFetch.stream('https://cdn.example.com/video.mp4', './video.mp4')
+await TLSFetch.stream('https://cdn.example.com/video.mp4', './video.mp4')
 ```
 
 ---
 
-## Interfaces
+##  Upgrade Guide to V2
+
+Version **v2** introduces several important changes compared to v1:
+
+### 1. Fully rewritten in TypeScript
+
+* The library is now fully written in TypeScript with **strict typing**.
+* Provides better IDE autocomplete and reduces type-related bugs.
+
+### 2. Uses N-API v3
+
+* Improves request/response performance compared to v1.
+* Fully compatible with modern Node.js and other platforms (Linux, Windows)(x64, arm).
+
+### 3. Major API changes
+
+#### a. `tlsFetch.post` / `tlsFetch.get` / `tlsFetch.delete` …
+
+* These methods now use **`HttpOptions`** instead of the old `RequestOptions`.
+* **`RequestOptions`** still exists, but is now **only used for the generic `fetch()` method**.
+
+**Example:**
 
 ```ts
-interface RequestOptions {
-  method?: string
-  headers?: Record<string, string>
-  body?: Buffer
-  proxy?: string
-}
-interface HttpResponse {
-  statusCode: number
-  headers: Record<string, string>
-  data: Buffer
-}
-interface HttpStreamResponse {
-  statusCode: number
-  headers: Record<string, string>
-  file: string
-}
-interface HttpResponsePlus extends HttpResponse {
-  json(): any
-  text(): string
-  buffer(): Buffer
+// v2
+tlsFetch.post(url, { body, headers }); // HttpOptions
+tlsFetch.fetch(url, { method: "POST", body, headers }); // RequestOptions (generic)
+```
+
+> Make sure to update all calls to `post/get/delete/...` to use the new `HttpOptions` interface.
+
+---
+
+#### b. `Response.headers`
+
+**Before (v1):**
+
+```ts
+headers: Record<string, string>
+```
+
+**After (v2):**
+
+```ts
+headers: Record<string, string | string[] | undefined>
+```
+
+> Supports headers with multiple values or undefined.
+> If your code reads `headers['some-header']` directly, check the type before using:
+
+```ts
+const value = response.headers['set-cookie'];
+if (Array.isArray(value)) {
+  value.forEach(cookie => console.log(cookie));
+} else if (value) {
+  console.log(value);
 }
 ```
+
+---
+
+#### c. No more default import
+
+* v2 **does not support default import**.
+* Update your import statements:
+
+```ts
+// Old v1 style
+import tlsFetch from '@yukiakai/tls-fetch';
+
+// New v2 style
+import { TLSFetch } from '@yukiakai/tls-fetch';
+```
+
+> This is required for TypeScript strict mode and better tree-shaking.
+
+---
+
+
+### 4. How to upgrade
+
+1. Update your package:
+
+```bash
+npm install @yukiakai/tls-fetch@latest
+```
+
+2. Change all calls to `post/get/delete/...` to use `HttpOptions`.
+3. For generic requests, use `fetch()` with `RequestOptions`.
+4. Update all import statements to **named import**:
+
+```ts
+import { TLSFetch } from '@yukiakai/tls-fetch';
+```
+
+5. Review all usage of `Response.headers` → make sure your code handles `string | string[] | undefined`.
+6. Rebuild your project if using TypeScript.
+
+---
+
+**Tip:** v2 is optimized for speed with N-API v3, so you’ll notice significant improvements when performing many parallel requests or handling large data.
 
 ---
 
@@ -195,9 +273,15 @@ interface HttpResponsePlus extends HttpResponse {
 
 ---
 
+## Changelog
+
+See full release notes in [CHANGELOG.md][changelog-url]
+
+---
+
 ## License
 
-MIT © [Yuki]
+MIT © [Yuki](https://github.com/yukiakai212)
 
 ---
 
@@ -210,4 +294,6 @@ PRs and issues welcome. Native TLS customization contributions especially apprec
 [npm-downloads-url]: https://www.npmjs.com/package/@yukiakai/tls-fetch
 [npm-url]: https://www.npmjs.com/package/@yukiakai/tls-fetch
 [npm-version-image]: https://badgen.net/npm/v/@yukiakai/tls-fetch
+[changelog-url]: https://github.com/yukiakai212/tls-fetch-prebuilt/blob/main/CHANGELOG.md
+[api-docs-url]: https://yukiakai212.github.io/tls-fetch-prebuilt/
 

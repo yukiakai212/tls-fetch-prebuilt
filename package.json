@@ -1,19 +1,18 @@
 {
   "name": "@yukiakai/tls-fetch",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "description": "Rust native HTTP client emulating real browser TLS handshakes.",
   "type": "module",
-  "main": "./index.mjs",
-  "types": "./index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "releaseBinary": "bin",
   "exports": {
-    "import": "./index.mjs",
-    "require": "./index.cjs"
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
   },
   "files": [
-    "index.cjs",
-    "index.mjs",
-    "index.d.ts",
+    "CHANGELOG.md",
     "bin/*",
     "dist/*"
   ],
@@ -22,22 +21,25 @@
     "win32"
   ],
   "cpu": [
-    "x64"
+    "x64",
+    "arm64"
   ],
   "napi": {
-    "name": "tls-fetch",
-    "triples": {
-      "defaults": false,
-      "additional": [
-        "x86_64-pc-windows-msvc",
-        "x86_64-unknown-linux-gnu"
-      ]
-    }
+    "binaryName": "tls-fetch"
   },
   "scripts": {
-    "test": "npx @napi-rs/cli build && vitest run --reporter verbose",
-    "release": "npm run build && node publish.js",
-    "build": "npx @napi-rs/cli build --release --platform --config package.json && tsup"
+    "test": "npm run build && npx vitest run --reporter verbose --coverage",
+    "test:release": "npx vitest run --reporter verbose --coverage && npm run test:sandbox",
+    "test:sandbox": "npx sandbox && npx tsx ./__tests__/sandbox.ts",
+    "format": "prettier --write **/*.{js,ts} && cargo fmt",
+    "format:check": "prettier --check **/*.{js,ts} && cargo fmt --check",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "release": "npm run build:release && npm run build:ts",
+    "build": "npx napi build --platform --package-json-path package.json -o bin && tsup",
+    "build:ts": "npx tsup",
+    "build:release": "npx napi build --release --platform --package-json-path package.json -o bin --target",
+    "docs": "npx typedoc"
   },
   "keywords": [
     "tls-fetch",
@@ -66,18 +68,24 @@
   "license": "MIT",
   "dependencies": {
     "@node-rs/helper": "^1.6.0",
+    "@yukiakai/find-up": "^1.1.5",
     "vanipath": "^1.0.5"
   },
   "devDependencies": {
-    "@napi-rs/cli": "^2.18.4",
+    "@changesets/cli": "^2.29.5",
+    "@eslint/js": "^9.32.0",
+    "@napi-rs/cli": "^3.1.5",
+    "@vitest/coverage-v8": "^3.2.4",
     "dotenv": "^17.0.0",
-    "esbuild": "^0.25.5",
-    "esbuild-node-externals": "^1.18.0",
-    "fs-extra": "^11.3.0",
-    "glob": "^11.0.3",
+    "eslint": "^9.32.0",
+    "pkg-sandbox": "^1.0.1",
+    "prettier": "^3.6.2",
     "proxy-chain": "^2.5.9",
     "tsup": "^8.5.0",
+    "tsx": "^4.20.3",
+    "typedoc": "^0.28.10",
     "typescript": "^5.8.3",
+    "typescript-eslint": "^8.39.0",
     "vitest": "^3.2.4"
   }
 }
