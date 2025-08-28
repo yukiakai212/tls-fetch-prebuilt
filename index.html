@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Documentation Versions</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      margin: 0.5rem 0;
+    }
+    a {
+      text-decoration: none;
+      color: #0366d6;
+      font-weight: bold;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>Documentation Versions</h1>
+  <ul id="versions-list">
+    <li>Loading versions...</li>
+  </ul>
+
+  <script>
+    async function loadVersions() {
+      try {
+        const res = await fetch('./versions.json');
+        if (!res.ok) throw new Error('Failed to fetch versions.json');
+        const versions = await res.json();
+        const list = document.getElementById('versions-list');
+        list.innerHTML = '';
+
+        versions.forEach(version => {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = `./${version}/`;  // link tới folder docs version
+          a.textContent = version === 'latest' ? 'Latest Version' : version;
+          li.appendChild(a);
+          list.appendChild(li);
+        });
+      } catch (err) {
+        document.getElementById('versions-list').textContent = 'Error loading versions.';
+        console.error(err);
+      }
+    }
+
+    loadVersions();
+  </script>
+</body>
+</html>
