@@ -1,6 +1,6 @@
 {
   "name": "@yukiakai/tls-fetch",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Rust native HTTP client emulating real browser TLS handshakes.",
   "type": "module",
   "main": "./dist/index.js",

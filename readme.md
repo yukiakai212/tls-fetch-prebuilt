@@ -27,40 +27,10 @@
 npm install @yukiakai/tls-fetch
 ```
 
-📦 Runtime Dependency: **OpenSSL 3 (`libssl.so.3`)**
+### System Requirements
 
-If you encounter an error like:
-
-```
-Error: libssl.so.3: cannot open shared object file: No such file or directory
-```
-
-Please install OpenSSL 3:
-
-### Ubuntu 22.04+
-```bash
-sudo apt update
-sudo apt install libssl3
-```
-
-### Ubuntu 20.04 or older:
-Manually build OpenSSL 3:
-```bash
-sudo apt install build-essential zlib1g-dev checkinstall
-cd /usr/local/src
-sudo wget https://www.openssl.org/source/openssl-3.0.14.tar.gz
-sudo tar -xf openssl-3.0.14.tar.gz
-cd openssl-3.0.14
-sudo ./config --prefix=/usr/local/openssl-3 --openssldir=/usr/local/openssl-3
-sudo make -j$(nproc)
-sudo make install
-```
-
-Then add this to your environment:
-```bash
-export LD_LIBRARY_PATH=/usr/local/openssl-3/lib:$LD_LIBRARY_PATH
-export PATH=/usr/local/openssl-3/bin:$PATH
-```
+* **Node.js 16+**
+* **glibc ≥ 2.35** (ships with Ubuntu 22.04+ or equivalent)
 
 ---
 
@@ -167,7 +137,12 @@ Version **v2** introduces several important changes compared to v1:
 * Improves request/response performance compared to v1.
 * Fully compatible with modern Node.js and other platforms (Linux, Windows)(x64, arm).
 
-### 3. Major API changes
+### 3. Internal TLS change
+
+* From v2, `@yukiakai/tls-fetch` bundles its own OpenSSL.
+* You no longer need to install or link against the system’s OpenSSL library.
+
+### 4. Major API changes
 
 #### a. `tlsFetch.post` / `tlsFetch.get` / `tlsFetch.delete` …
 
