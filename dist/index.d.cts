@@ -38,5 +38,6 @@ declare class TLSFetch {
 }
 declare const tlsFetch: typeof TLSFetch;
 declare const TlsFetch: typeof TLSFetch;
+declare const fetch: typeof TLSFetch.fetch;
 
-export { type HttpOptions, HttpResponse, HttpStreamResponse, type RequestOptions, TLSFetch, TLSFetchCore, TlsFetch, tlsFetch };
+export { type HttpOptions, HttpResponse, HttpStreamResponse, type RequestOptions, TLSFetch, TLSFetchCore, TlsFetch, fetch, tlsFetch };

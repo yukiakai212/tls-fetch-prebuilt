@@ -1,10 +1,16 @@
 # @yukiakai/tls-fetch
 
+## 2.0.2
+
+### Patch Changes
+
+- 5cdd280: Support import fetch direct
+
 ## 2.0.1
 
 ### Patch Changes
 
-- f242102: Fix: Minium build requirements (glibc ≥ 2.35, not 2.38)
+- f242102: Fix: Minium build requirements (glibc ≥ 2.35, not 2.39)
 
 ## 2.0.0
 

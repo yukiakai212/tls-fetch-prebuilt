@@ -99,9 +99,9 @@ const res = await TLSFetch.post('https://api.example.com', {
 Generic method supporting any HTTP verb.
 
 ```ts
-import { TLSFetch } from '@yukiakai/tls-fetch'
+import { fetch } from '@yukiakai/tls-fetch'
 
-const res = await TLSFetch.fetch('https://api.example.com/item/123', {
+const res = await fetch('https://api.example.com/item/123', {
   method: 'PUT',
   headers: { 'Authorization': 'Bearer token' },
   body: Buffer.from('payload'),
