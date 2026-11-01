@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Documentation</title>
+
+  <link
+    rel="stylesheet"
+    href="./assets/styles.css"
+  />
+</head>
+<body>
+  <div class="container">
+    <h1>Documentation</h1>
+
+    <div class="card">
+      <div class="field">
+        <label for="group-select">
+          Group
+        </label>
+
+        <select id="group-select">
+          <option value="">
+            All groups
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div
+      id="list"
+      class="list"
+    ></div>
+  </div>
+
+  <template
+    id="version-item-template"
+  >
+    <a class="item">
+      <div class="item-header">
+        <div class="item-title"></div>
+
+        <div class="badges"></div>
+      </div>
+
+      <div class="meta">
+        <span class="version"></span>
+
+        <span class="date"></span>
+      </div>
+    </a>
+  </template>
+
+  <template
+    id="badge-template"
+  >
+    <span class="badge"></span>
+  </template>
+
+  <template
+    id="empty-template"
+  >
+    <div class="empty">
+      No versions found.
+    </div>
+  </template>
+  <template id="group-option-template">
+  <option></option>
+</template>
+
+  <script src="./assets/scripts.js"></script>
+
+  <script>
+    DocsApp.bootstrapDocsIndexPage();
+  </script>
+</body>
+</html>

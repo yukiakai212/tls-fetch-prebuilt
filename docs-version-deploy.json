@@ -1,0 +1,19 @@
+{
+  "latest": "6.0.0",
+  "versions": {
+    "v2.0.2": {
+      "version": "v2.0.2",
+      "title": "v2.0.2",
+      "date": "2026-11-01",
+      "group": null,
+      "cleanupStrategy": "none"
+    },
+    "6.0.0": {
+      "version": "6.0.0",
+      "title": "6.0.0",
+      "date": "2026-11-01",
+      "group": "release",
+      "cleanupStrategy": "none"
+    }
+  }
+}
