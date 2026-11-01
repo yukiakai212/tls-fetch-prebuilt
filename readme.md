@@ -6,7 +6,7 @@
 
 &#x20;
 
-`@yukiakai/tls-fetch` is a native Node.js module (built with Rust & napi-rs) designed to bypass browser fingerprint authentication by simulating low-level TLS handshakes that resemble real browsers. Note: macOS is not supported.
+`@yukiakai/tls-fetch` is a native Node.js module (built with Rust & napi-rs) designed to bypass browser fingerprint authentication by simulating low-level TLS handshakes that resemble real browsers.
 
 ---
 
@@ -30,25 +30,32 @@ npm install @yukiakai/tls-fetch
 ### System Requirements
 
 * **Node.js 16+**
-* **glibc ≥ 2.35** (ships with Ubuntu 22.04+ or equivalent)
+* A supported operating system and CPU architecture
+* The native HTTP layer uses Rustls for TLS. No separate OpenSSL runtime needs to be documented as a v6 requirement.
+**Linux:** an OpenSSL 3 runtime that provides `libssl.so.3`
 
+> The Linux native addon dynamically links against the system OpenSSL runtime. Ensure OpenSSL 3 is installed in the
+  host or container image before running the package.
+
+| Platform |  Supported targets                                               |
+| :---:    | :---:                                                            |
+| Linux    |  x64 GNU, ARM64 GNU, x64 musl, ARM64 musl, ARMv7 GNU (gnueabihf) |
+| Windows  |  x64, ARM64, ia32                                                |
+| macOS    |  Apple Silicon (ARM64), Intel (x64)                              |
+| FreeBSD  |  x64                                                             |
+
+You normally do not need to install an @tls-fetch/addon-* package directly. The root package resolves the appropriate
+native add-on for the current platform.
+  
 ---
 
 ## Usage
-### CommonJS
-```js
-const { TLSFetch } = require('@yukiakai/tls-fetch');
 
-TLSFetch.get('https://example.com', {
-  headers : { 'User-Agent': 'Mozilla/5.0 ...' },
-}).then(res => { /* todo */})
-
-```
 ### ESM
 ```js
-import { TLSFetch }  from '@yukiakai/tls-fetch';
+import { httpClient }  from '@yukiakai/tls-fetch';
 
-const res = await TLSFetch.post('https://example.com/api', {
+const res = await httpClient.post('https://example.com/api', {
   headers: { 'Content-Type': 'application/json' },
   body: Buffer.from(JSON.stringify({ foo: 'bar' })),
 });
@@ -56,179 +63,153 @@ console.log(res.statusCode);
 
 ```
 
+### CommonJS
+```js
+const { httpClient } = require('@yukiakai/tls-fetch');
+
+httpClient.get('https://example.com', {
+  headers : { 'User-Agent': 'Mozilla/5.0 ...' },
+}).then(res => { /* todo */})
+
+```
+
 ---
 
 ## API
 
-See docs: [API docs][api-docs-url]
+See docs: [API docs][api-docs-url] for the complete reference
 
-All methods are **Promise-based** and use `Buffer` for binary-safe transmission.
+### Client exports
 
-### `get(url: string, options?: HttpOptions): Promise<HttpResponse>`
-
-Performs a `GET` request with browser-like TLS fingerprinting.
-
-```ts
-import { tlsFetch } from '@yukiakai/tls-fetch'
-
-const res = await tlsFetch.get('https://example.com', {
-  headers : { 'User-Agent': 'Mozilla/5.0 ...' },
-})
-console.log(res.statusCode, res.headers, res.text())
+```js
+import client, { httpClient, request } from '@yukiakai/tls-fetch';
 ```
 
----
+- `httpClient` is the configured `HttpClient` instance.
+- `request` is a bound shortcut for `httpClient.request()`.
 
-### `post(url: string, options?: HttpOptions): Promise<HttpResponse>`
-
-Sends a `POST` request.
+`httpClient` exposes:
 
 ```ts
-import { TLSFetch } from '@yukiakai/tls-fetch'
-
-const res = await TLSFetch.post('https://api.example.com', {
-  headers: { 'Content-Type': 'application/json' },
-  body: Buffer.from(JSON.stringify({ foo: 'bar' }))
-})
+httpClient.get(url, options?);
+httpClient.head(url, options?);
+httpClient.post(url, options?);
+httpClient.put(url, options?);
+httpClient.patch(url, options?);
+httpClient.delete(url, options?);
+httpClient.request(url, options?);
+httpClient.download(url, destinationPath, options?);
 ```
 
----
+### Requests
 
-### `fetch(url: string, options: RequestOptions): Promise<HttpResponse>`
+Performs a `POST` request with browser-like TLS fingerprinting.
 
-Generic method supporting any HTTP verb.
+```js
+import { httpClient } from '@yukiakai/tls-fetch';
 
-```ts
-import { fetch } from '@yukiakai/tls-fetch'
+const response = await httpClient.post('https://api.example.com/items', {
+  headers: {
+    'content-type': 'application/json',
+  },
+  body: Buffer.from(JSON.stringify({ name: 'example' })),
+});
 
-const res = await fetch('https://api.example.com/item/123', {
-  method: 'PUT',
-  headers: { 'Authorization': 'Bearer token' },
-  body: Buffer.from('payload'),
-  proxy: 'http://127.0.0.1:8080'
-})
+console.log(response.statusCode);
 ```
 
----
+Use request() for any HTTP method:
 
-### `stream(url: string, filePath: string, options?: RequestOptions): Promise<HttpStreamResponse>`
+```js
+import { request } from '@yukiakai/tls-fetch';
 
-Stream response directly to a file.
+const response = await request('https://api.example.com/items/123', {
+  method: 'PATCH',
+  headers: {
+    authorization: 'Bearer token',
+    'content-type': 'application/json',
+  },
+  body: Buffer.from(JSON.stringify({ enabled: true })),
+  proxy: 'http://127.0.0.1:8080',
+});
 
-```ts
-import { TLSFetch } from '@yukiakai/tls-fetch'
-
-await TLSFetch.stream('https://cdn.example.com/video.mp4', './video.mp4')
+console.log(response.json());
 ```
 
----
+### Downloads
 
-##  Upgrade Guide to V2
+download() writes the response body directly to the supplied destination path.
 
-Version **v2** introduces several important changes compared to v1:
+```js
+import { httpClient } from '@yukiakai/tls-fetch';
 
-### 1. Fully rewritten in TypeScript
+const response = await httpClient.download(
+  'https://example.com/archive.zip',
+  './archive.zip',
+);
 
-* The library is now fully written in TypeScript with **strict typing**.
-* Provides better IDE autocomplete and reduces type-related bugs.
-
-### 2. Uses N-API v3
-
-* Improves request/response performance compared to v1.
-* Fully compatible with modern Node.js and other platforms (Linux, Windows)(x64, arm).
-
-### 3. Internal TLS change
-
-* From v2, `@yukiakai/tls-fetch` bundles its own OpenSSL.
-* You no longer need to install or link against the system’s OpenSSL library.
-
-### 4. Major API changes
-
-#### a. `tlsFetch.post` / `tlsFetch.get` / `tlsFetch.delete` …
-
-* These methods now use **`HttpOptions`** instead of the old `RequestOptions`.
-* **`RequestOptions`** still exists, but is now **only used for the generic `fetch()` method**.
-
-**Example:**
-
-```ts
-// v2
-tlsFetch.post(url, { body, headers }); // HttpOptions
-tlsFetch.fetch(url, { method: "POST", body, headers }); // RequestOptions (generic)
+console.log(response.statusCode);
+console.log(response.filePath);
 ```
 
-> Make sure to update all calls to `post/get/delete/...` to use the new `HttpOptions` interface.
+### Request options
 
----
+- Request-header values must be strings.
+- Request bodies must be Node.js `Buffer` instances.
+- `GET` and `HEAD` requests cannot include a body.
+- `request()` and `download()` default to `GET` when `method` is omitted.
 
-#### b. `Response.headers`
+### Responses
 
-**Before (v1):**
+`HttpResponse` contains:
 
 ```ts
-headers: Record<string, string>
+response.statusCode;
+response.headers;
+response.buffer();
+response.text();
+response.json<T>();
 ```
 
-**After (v2):**
+Response header names are normalized to lowercase. A header with multiple values is represented as string[].
 
-```ts
-headers: Record<string, string | string[] | undefined>
-```
+```js
+const setCookie = response.headers['set-cookie'];
 
-> Supports headers with multiple values or undefined.
-> If your code reads `headers['some-header']` directly, check the type before using:
-
-```ts
-const value = response.headers['set-cookie'];
-if (Array.isArray(value)) {
-  value.forEach(cookie => console.log(cookie));
-} else if (value) {
-  console.log(value);
+if (Array.isArray(setCookie)) {
+  for (const cookie of setCookie) {
+    console.log(cookie);
+  }
 }
 ```
 
+`download()` returns `HttpDownloadResponse`, which contains `statusCode`, `headers`, and `filePath`.
+
 ---
 
-#### c. No more default import
-
-* v2 **does not support default import**.
-* Update your import statements:
+## Migrating to v6
 
 ```ts
-// Old v1 style
-import tlsFetch from '@yukiakai/tls-fetch';
+// Before
+import { TLSFetch, fetch } from '@yukiakai/tls-fetch';
 
-// New v2 style
-import { TLSFetch } from '@yukiakai/tls-fetch';
+await TLSFetch.stream(url, destination);
+await fetch(url, { method: 'PATCH' });
+
+// v6
+import { httpClient, request } from '@yukiakai/tls-fetch';
+
+await httpClient.download(url, destination);
+await request(url, { method: 'PATCH' });
 ```
-
-> This is required for TypeScript strict mode and better tree-shaking.
-
----
-
-
-### 4. How to upgrade
-
-1. Update your package:
-
-```bash
-npm install @yukiakai/tls-fetch@latest
-```
-
-2. Change all calls to `post/get/delete/...` to use `HttpOptions`.
-3. For generic requests, use `fetch()` with `RequestOptions`.
-4. Update all import statements to **named import**:
-
-```ts
-import { TLSFetch } from '@yukiakai/tls-fetch';
-```
-
-5. Review all usage of `Response.headers` → make sure your code handles `string | string[] | undefined`.
-6. Rebuild your project if using TypeScript.
-
----
-
-**Tip:** v2 is optimized for speed with N-API v3, so you’ll notice significant improvements when performing many parallel requests or handling large data.
+	
+- Use `httpClient` instead of `TLSFetch` or `TlsFetch`.
+- Use `request()` instead of `fetch()` for generic HTTP requests.
+- Use `download()` instead of `stream()` for file downloads.
+- Response header values changed from `string | string[] | undefined` to `string | string[]`.
+- Platform add-ons are now named `@tls-fetch/addon-*`; application code should import only `@yukiakai/tls-fetch.
+- v6 adds support for macOS, FreeBSD x64, Windows ia32, and Linux ARMv7 GNU.
+- Linux deployments must include the OpenSSL 3 runtime required by the native add-on.
 
 ---
 
@@ -237,14 +218,25 @@ import { TLSFetch } from '@yukiakai/tls-fetch';
 * Bypass anti-bot browser checks
 * Access sites using real browser-like TLS handshakes
 * Fetch through proxies (for scraping, automation)
-* Download large files directly to disk (stream mode)
+* Download large files directly to disk
 
 ---
 
-## Notes
+## Troubleshooting
 
-* Requires Node.js 16+
-* Compatible with Linux and Windows
+### No compatible native add-on
+
+If loading the package throws `ERR_TLS_FETCH_NATIVE_ADDON_UNAVAILABLE`, verify that the current operating system and architecture are listed above. 
+Then reinstall dependencies without omitting optional dependencies.
+
+### Missing OpenSSL on Linux
+
+If Node reports that `libssl.so.3` cannot be opened, install the OpenSSL 3 runtime in the host or container image.
+The native add-on cannot load until that library is available.
+
+## Documentation
+
+See the generated API documentation: [API docs][api-docs-url]
 
 ---
 
@@ -256,7 +248,7 @@ See full release notes in [CHANGELOG.md][changelog-url]
 
 ## License
 
-MIT © [Yuki](https://github.com/yukiakai212)
+MIT © [Yuki Akai](https://github.com/yukiakai212)
 
 ---
 

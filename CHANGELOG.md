@@ -1,5 +1,49 @@
 # @yukiakai/tls-fetch
 
+## 6.0.0
+
+### Breaking Changes
+
+- Use `httpClient` as the named client export. Update earlier examples that import or reference `TLSFetch` or `TlsFetch`.
+- Use `request()` for generic HTTP requests instead of `fetch()`.
+- Use `download()` instead of `stream()` for file downloads.
+- Response header names are normalized to lowercase, and header values no longer include `undefined`: `Record<string, string | string[] | undefined>` is now `Record<string, string | string[]>`.
+- Platform-native packages now use the `@tls-fetch/addon-*` naming scheme. Applications should import only `@yukiakai/tls-fetch`.
+
+### Added
+
+- Support for macOS on Apple Silicon (`arm64`) and Intel (`x64`).
+- Support for Windows `ia32`.
+- Support for Linux ARMv7 GNU (`arm-gnueabihf`).
+- Support for FreeBSD `x64`.
+- A default export for the configured HTTP client.
+- `ERR_TLS_FETCH_NATIVE_ADDON_UNAVAILABLE` when no compatible native add-on can be loaded.
+
+### Changed
+
+- The native HTTP layer now uses Rustls for TLS, replacing the bundled OpenSSL implementation documented in v2.
+- Native add-ons are resolved automatically for the current operating system and architecture.
+
+### Fixed
+
+- The top-level `request` export is bound to its HTTP client and can be safely called directly.
+
+### Migration
+
+```ts
+// Before
+import { TLSFetch, fetch } from '@yukiakai/tls-fetch';
+
+await TLSFetch.stream(url, destination);
+await fetch(url, { method: 'PATCH' });
+
+// v6
+import { httpClient, request } from '@yukiakai/tls-fetch';
+
+await httpClient.download(url, destination);
+await request(url, { method: 'PATCH' });
+```
+
 ## 2.0.2
 
 ### Patch Changes
