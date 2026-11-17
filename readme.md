@@ -31,8 +31,7 @@ npm install @yukiakai/tls-fetch
 
 * **Node.js 16+**
 * A supported operating system and CPU architecture
-* The native HTTP layer uses Rustls for TLS. No separate OpenSSL runtime needs to be documented as a v6 requirement.
-**Linux:** an OpenSSL 3 runtime that provides `libssl.so.3`
+* **Linux:** an OpenSSL 3 runtime that provides `libssl.so.3`
 
 > The Linux native addon dynamically links against the system OpenSSL runtime. Ensure OpenSSL 3 is installed in the
   host or container image before running the package.
@@ -40,7 +39,7 @@ npm install @yukiakai/tls-fetch
 | Platform |  Supported targets                                               |
 | :---:    | :---:                                                            |
 | Linux    |  x64 GNU, ARM64 GNU, x64 musl, ARM64 musl, ARMv7 GNU (gnueabihf) |
-| Windows  |  x64, ARM64, ia32                                                |
+| Windows  |  x64, ARM64                                                      |
 | macOS    |  Apple Silicon (ARM64), Intel (x64)                              |
 | FreeBSD  |  x64                                                             |
 
@@ -208,7 +207,7 @@ await request(url, { method: 'PATCH' });
 - Use `download()` instead of `stream()` for file downloads.
 - Response header values changed from `string | string[] | undefined` to `string | string[]`.
 - Platform add-ons are now named `@tls-fetch/addon-*`; application code should import only `@yukiakai/tls-fetch.
-- v6 adds support for macOS, FreeBSD x64, Windows ia32, and Linux ARMv7 GNU.
+- v6 adds support for macOS, FreeBSD x64, Windows ARM64, and Linux ARMv7 GNU.
 - Linux deployments must include the OpenSSL 3 runtime required by the native add-on.
 
 ---

@@ -1,5 +1,15 @@
 # @yukiakai/tls-fetch
 
+## 6.1.0
+
+### Removed
+
+- Removed support for 32-bit Windows (`win32-ia32`, x86). Native bindings are no longer published for `i686-pc-windows-msvc`.
+
+### Changed
+
+- Native platform packages are now published with npm trusted publishing.
+
 ## 6.0.0
 
 ### Breaking Changes

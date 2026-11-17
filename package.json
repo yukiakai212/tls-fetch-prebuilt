@@ -1,6 +1,6 @@
 {
   "name": "@yukiakai/tls-fetch",
-  "version": "6.0.0",
+  "version": "6.1.1",
   "description": "Rust native HTTP client emulating real browser TLS handshakes.",
   "type": "module",
   "main": "./dist/public.js",
@@ -60,16 +60,15 @@
     "@tls-fetch/addon": "*"
   },
   "optionalDependencies": {
-    "@tls-fetch/addon-linux-x64-gnu": "6.0.0",
-    "@tls-fetch/addon-linux-arm64-gnu": "6.0.0",
-    "@tls-fetch/addon-linux-x64-musl": "6.0.0",
-    "@tls-fetch/addon-linux-arm64-musl": "6.0.0",
-    "@tls-fetch/addon-linux-arm-gnueabihf": "6.0.0",
-    "@tls-fetch/addon-win32-x64-msvc": "6.0.0",
-    "@tls-fetch/addon-win32-arm64-msvc": "6.0.0",
-    "@tls-fetch/addon-win32-ia32-msvc": "6.0.0",
-    "@tls-fetch/addon-darwin-arm64": "6.0.0",
-    "@tls-fetch/addon-darwin-x64": "6.0.0",
-    "@tls-fetch/addon-freebsd-x64": "6.0.0"
+    "@tls-fetch/addon-linux-x64-gnu": "6.1.1",
+    "@tls-fetch/addon-linux-arm64-gnu": "6.1.1",
+    "@tls-fetch/addon-linux-x64-musl": "6.1.1",
+    "@tls-fetch/addon-linux-arm64-musl": "6.1.1",
+    "@tls-fetch/addon-linux-arm-gnueabihf": "6.1.1",
+    "@tls-fetch/addon-win32-x64-msvc": "6.1.1",
+    "@tls-fetch/addon-win32-arm64-msvc": "6.1.1",
+    "@tls-fetch/addon-darwin-arm64": "6.1.1",
+    "@tls-fetch/addon-darwin-x64": "6.1.1",
+    "@tls-fetch/addon-freebsd-x64": "6.1.1"
   }
 }
