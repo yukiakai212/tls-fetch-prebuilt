@@ -1,0 +1,16 @@
+{
+  "formatVersion": 2,
+  "latestVersion": "6.0.1",
+  "versions": [
+    {
+      "version": "6.0.1",
+      "retentionScope": "stable-v6",
+      "publishedAt": 1794946940431
+    },
+    {
+      "version": "6.0.0",
+      "retentionScope": null,
+      "publishedAt": null
+    }
+  ]
+}

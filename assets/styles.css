@@ -1,137 +1,151 @@
+:root {
+  color-scheme: dark;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+  min-width: 320px;
   background: #0f172a;
-  color: #e2e8f0;
 }
 
-.container {
-  max-width: 720px;
-  margin: 80px auto;
-  padding: 20px;
+a {
+  color: inherit;
+}
+.docs-version-page {
+  width: min(100% - 2rem, 44rem);
+  margin: 0 auto;
+  padding: 4rem 0;
 }
 
-h1 {
-  margin-bottom: 30px;
-  text-align: center;
+.docs-version-page-header {
+  margin-bottom: 2rem;
 }
 
-.card {
-  background: #1e293b;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 30px;
-  border: 1px solid #334155;
+.docs-version-page-header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 2.75rem);
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-label {
-  font-size: 14px;
+.docs-version-page-header p {
+  margin: 0.75rem 0 0;
   color: #94a3b8;
 }
-
-select {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #475569;
-  background: #0f172a;
-  color: #e2e8f0;
-  font-size: 14px;
-}
-
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.item {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-
-  padding: 16px;
-  border-radius: 12px;
-
-  background: #1e293b;
-  border: 1px solid #334155;
-
-  text-decoration: none;
-  color: #e2e8f0;
-
-  cursor: pointer;
-
-  transition:
-    background 120ms ease,
-    border-color 120ms ease,
-    transform 120ms ease;
-}
-
-.item:hover {
-  background: #273449;
-  border-color: #475569;
-  transform: translateY(-1px);
-}
-
-.item-header {
+.docs-version-latest-callout {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #2563eb;
+  border-radius: 0.75rem;
+  background: #172554;
 }
 
-.item-title {
-  font-size: 16px;
+.docs-version-latest-label {
+  margin: 0;
   font-weight: 600;
 }
 
-.badges {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+.docs-version-latest-link {
+  color: #bfdbfe;
+  font-weight: 600;
+}
+.docs-version-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.badge {
-  padding: 4px 8px;
+.docs-version-card {
+  display: block;
+  padding: 1rem 1.25rem;
+  border: 1px solid #334155;
+  border-radius: 0.75rem;
+  background: #1e293b;
+  text-decoration: none;
+  transition:
+    border-color 120ms ease,
+    background 120ms ease,
+    transform 120ms ease;
+}
+.docs-version-card:hover,
+.docs-version-card:focus-visible {
+  border-color: #60a5fa;
+  background: #273449;
+  transform: translateY(-1px);
+}
+
+.docs-version-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.docs-version-name {
+  font-size: 1rem;
+}
+.docs-version-latest-badge {
+  padding: 0.2rem 0.55rem;
   border-radius: 999px;
-  font-size: 12px;
-  background: #334155;
+  background: #2563eb;
+  color: #eff6ff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.docs-version-published-at {
+  display: block;
+  margin-top: 0.4rem;
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+.docs-version-loading,
+.docs-version-empty-state,
+.docs-version-load-error {
+  margin: 0;
+  padding: 1.25rem;
+  border: 1px solid #334155;
+  border-radius: 0.75rem;
+  background: #1e293b;
   color: #cbd5e1;
 }
 
-.badge-latest {
-  background: #2563eb;
-  color: white;
+.docs-version-load-error {
+  border-color: #dc2626;
+  color: #fecaca;
 }
-
-.meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-
-  font-size: 13px;
-  color: #94a3b8;
-}
-
-.empty {
-  padding: 24px;
+.docs-version-redirect-page {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
   text-align: center;
-  border-radius: 12px;
-  background: #1e293b;
-  border: 1px dashed #334155;
-  color: #94a3b8;
 }
 
-@media (max-width: 640px) {
-  .container {
-    margin: 40px auto;
+@media (max-width: 40rem) {
+  .docs-version-page {
+    padding-top: 2rem;
+  }
+
+  .docs-version-latest-callout {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

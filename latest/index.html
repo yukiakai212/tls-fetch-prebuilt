@@ -1,21 +1,28 @@
 <!doctype html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>Redirecting…</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <noscript>
-    JavaScript is required to load the latest docs.
-  </noscript>
-</head>
-<body>
-    <script src="../assets/scripts.js"></script>
-	 <p>
-    Redirecting to latest
-    documentation version...
-  </p>
-<script>
-  DocsApp.bootstrapLatestVersionPage();
-</script>
-</body>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+
+    <title>Redirecting to latest documentation</title>
+
+    <link rel="stylesheet" href="../assets/styles.css" />
+    <script defer src="../assets/scripts/latest-version-redirect.js"></script>
+  </head>
+
+  <body>
+    <main class="docs-version-page docs-version-redirect-page">
+      <p id="latest-version-redirect-message" aria-live="polite">
+        Redirecting to the latest documentation version...
+      </p>
+
+      <noscript>
+        <p>
+          JavaScript is required to resolve the latest version.
+          <a href="../">Open the documentation version list.</a>
+        </p>
+      </noscript>
+    </main>
+  </body>
 </html>
