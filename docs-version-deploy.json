@@ -1,7 +1,12 @@
 {
   "formatVersion": 2,
-  "latestVersion": "6.1.0",
+  "latestVersion": "6.1.1",
   "versions": [
+    {
+      "version": "6.1.1",
+      "retentionScope": "stable-v6",
+      "publishedAt": 1794951270535
+    },
     {
       "version": "6.1.0",
       "retentionScope": "stable-v6",
